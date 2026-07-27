@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/prewarm-content",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}
