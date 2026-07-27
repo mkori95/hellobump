@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-const NAV_ITEMS = [
+export const NAV_ITEMS = [
   { href: "/home", label: "Home" },
   { href: "/checkin", label: "Check-in" },
   { href: "/companion", label: "Companion" },
@@ -17,11 +17,14 @@ const NAV_ITEMS = [
   { href: "/profile", label: "Profile" },
 ];
 
+// Desktop-only horizontal nav — below md, AppShell renders MobileNav's
+// hamburger + slide-out drawer instead (a scrollable pill row doesn't work
+// well as a primary nav on a phone-width screen).
 export function AppNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex items-center gap-1 overflow-x-auto font-ui text-sm">
+    <nav className="hidden items-center gap-1 font-ui text-sm md:flex">
       {NAV_ITEMS.map(({ href, label }) => {
         const isActive = pathname === href;
         return (
