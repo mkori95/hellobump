@@ -30,9 +30,27 @@ const quicksand = Quicksand({
   variable: "--font-ui",
 });
 
+// Falls back to localhost so metadata resolution never breaks in dev; in
+// production this should be the real deployed URL (same value as
+// NEXTAUTH_URL, which must be set post-deploy once Vercel assigns one).
+const SITE_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: `${BRAND.name} — ${BRAND.tagline}`,
   description: BRAND.description,
+  keywords: ["pregnancy tracker", "pregnancy app", "pregnancy companion", "baby names"],
+  openGraph: {
+    title: `${BRAND.name} — ${BRAND.tagline}`,
+    description: BRAND.description,
+    siteName: BRAND.name,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${BRAND.name} — ${BRAND.tagline}`,
+    description: BRAND.description,
+  },
 };
 
 export default function RootLayout({
