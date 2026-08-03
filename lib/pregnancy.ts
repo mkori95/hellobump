@@ -52,22 +52,35 @@ export interface PregnancyStats {
   daysPregnant: number;
   daysToGo: number;
   week: number;
-  dayOfWeek: number; // 1-7, day within the current week
+  dayOfWeek: number; // 0-6, extra days beyond `week` completed weeks (e.g. week 8 + dayOfWeek 2 = "8 weeks 2 days")
   trimester: Trimester;
 }
 
 const FULL_TERM_DAYS = 280;
 
-/** `todayISO` defaults to the current date. All math is whole-day, timezone-naive (UTC midnight). */
+/**
+ * `todayISO` defaults to the current date. All math is whole-day, timezone-naive (UTC midnight).
+ *
+ * `week` = number of *completed* weeks since the last period — the standard
+ * clinical convention, verified directly against nhs.uk: their own due-date
+ * calculator reports "approximately 8 weeks pregnant" at 58 elapsed days
+ * (58 = 8*7 + 2), and their week-by-week guide's "Week 8" article explicitly
+ * describes someone who "is 8 weeks pregnant" — i.e. the article-numbering
+ * our content pipeline fetches by week uses the exact same convention as the
+ * headline stat. Do NOT add +1 here ("the week you're currently living
+ * through") — that was a previous bug that showed users a week ahead of
+ * their actual gestational age and fetched the wrong NHS week content to
+ * match it.
+ */
 export function getPregnancyStats(dueDateISO: string, todayISO?: string): PregnancyStats {
   const today = todayISO ?? new Date().toISOString().slice(0, 10);
   const daysToGo = daysBetween(today, dueDateISO);
   const daysPregnant = FULL_TERM_DAYS - daysToGo;
 
   const clampedDays = Math.max(0, daysPregnant);
-  const week = Math.min(42, Math.floor(clampedDays / 7) + 1);
-  const dayOfWeek = (clampedDays % 7) + 1;
-  const trimester: Trimester = week <= 13 ? 1 : week <= 27 ? 2 : 3;
+  const week = Math.max(1, Math.min(42, Math.floor(clampedDays / 7)));
+  const dayOfWeek = clampedDays % 7;
+  const trimester: Trimester = week <= 12 ? 1 : week <= 27 ? 2 : 3;
 
   return { daysPregnant, daysToGo, week, dayOfWeek, trimester };
 }

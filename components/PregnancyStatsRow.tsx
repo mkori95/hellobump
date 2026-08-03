@@ -24,11 +24,13 @@ function Stat({ icon: Icon, label, value }: { icon: LucideIcon; label: string; v
 export function PregnancyStatsRow({ stats }: { stats: PregnancyStats }) {
   const daysToGoLabel =
     stats.daysToGo > 0 ? `${stats.daysToGo}` : stats.daysToGo === 0 ? "Today!" : "Past due";
+  const weekLabel =
+    stats.dayOfWeek === 0 ? `${stats.week} weeks` : `${stats.week} weeks, ${stats.dayOfWeek} day${stats.dayOfWeek === 1 ? "" : "s"}`;
 
   return (
     <div className="grid grid-cols-2 items-stretch gap-3 sm:grid-cols-4">
       <Stat icon={CalendarDays} label="Day" value={`${Math.max(1, stats.daysPregnant)}`} />
-      <Stat icon={Baby} label={`Week ${stats.week}, day ${stats.dayOfWeek}`} value={`${stats.week}`} />
+      <Stat icon={Baby} label={weekLabel} value={`${stats.week}`} />
       <Stat icon={Layers} label={TRIMESTER_LABEL[stats.trimester]} value={`${stats.trimester}`} />
       <Stat icon={Hourglass} label="Days to go" value={daysToGoLabel} />
     </div>
